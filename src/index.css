@@ -1,0 +1,89 @@
+/* AG Shop - Crimson theme */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Override primary colors to crimson */
+.bg-primary-50, [class~="bg-primary-50"] { background-color: #FEF2F2 !important; }
+.bg-primary-100, [class~="bg-primary-100"] { background-color: #FEE2E2 !important; }
+.bg-primary-500\/20 { background-color: rgba(196, 30, 58, 0.2) !important; }
+.bg-primary-600, [class~="bg-primary-600"] { background-color: #8B1A1A !important; }
+.bg-primary-700, [class~="bg-primary-700"] { background-color: #6B1414 !important; }
+.bg-primary-800, [class~="bg-primary-800"] { background-color: #4A0E0E !important; }
+.bg-primary-900, [class~="bg-primary-900"] { background-color: #2D0808 !important; }
+.text-primary-200, [class~="text-primary-200"] { color: #FECACA !important; }
+.text-primary-300, [class~="text-primary-300"] { color: #FCA5A5 !important; }
+.text-primary-400, [class~="text-primary-400"] { color: #F87171 !important; }
+.text-primary-500, [class~="text-primary-500"] { color: #C41E3A !important; }
+.text-primary-600, [class~="text-primary-600"] { color: #8B1A1A !important; }
+.text-primary-700, [class~="text-primary-700"] { color: #6B1414 !important; }
+.border-primary-200, [class~="border-primary-200"] { border-color: #FECACA !important; }
+.border-primary-600, [class~="border-primary-600"] { border-color: #8B1A1A !important; }
+.from-primary-50 { --tw-gradient-from: #FEF2F2 !important; }
+.from-primary-100 { --tw-gradient-from: #FEE2E2 !important; }
+.from-primary-600 { --tw-gradient-from: #8B1A1A !important; }
+.from-primary-700 { --tw-gradient-from: #6B1414 !important; }
+.to-primary-100 { --tw-gradient-to: #FEE2E2 !important; }
+.to-primary-800 { --tw-gradient-to: #4A0E0E !important; }
+.to-primary-900 { --tw-gradient-to: #2D0808 !important; }
+.via-primary-800 { --tw-gradient-via: #4A0E0E !important; }
+.hover\:bg-primary-50:hover { background-color: #FEF2F2 !important; }
+.hover\:bg-primary-100:hover { background-color: #FEE2E2 !important; }
+.hover\:bg-primary-700:hover { background-color: #6B1414 !important; }
+.ring-primary-500, [class~="ring-primary-500"] { --tw-ring-color: #C41E3A !important; }
+.focus\:ring-primary-500:focus { --tw-ring-color: #C41E3A !important; }
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply text-white font-semibold px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2;
+    background-color: #8B1A1A;
+  }
+  .btn-primary:hover {
+    background-color: #6B1414;
+  }
+  .btn-secondary {
+    @apply bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2;
+  }
+  .btn-danger {
+    @apply bg-red-50 hover:bg-red-100 text-red-600 font-semibold px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2;
+  }
+  .card {
+    @apply bg-white rounded-2xl shadow-sm border border-gray-100 p-6;
+  }
+  .input {
+    @apply w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-transparent transition;
+    --tw-ring-color: #C41E3A;
+  }
+  .input:focus {
+    outline: none;
+    border-color: transparent;
+    box-shadow: 0 0 0 2px #C41E3A;
+  }
+  .label {
+    @apply block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wide;
+  }
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #C41E3A;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #8B1A1A;
+}

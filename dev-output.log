@@ -1,0 +1,74 @@
+
+> ag-shop@1.0.0 dev
+> vite
+
+
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m724[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5173[22m/[39m
+[2m  [32m➜[39m  [1mNetwork[22m[2m: use [22m[1m--host[22m[2m to expose[22m
+[2m11:18:18 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Login.jsx, /src/index.css[22m
+[2m11:20:28 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/AppContext.jsx, /src/index.css[22m
+[2m11:20:28 p. m.[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/AppContext.jsx[22m Could not Fast Refresh ("useApp" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m11:20:28 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/index.css, /src/pages/Dashboard.jsx, /src/pages/SaleDetail.jsx, /src/pages/Login.jsx, /src/pages/NewSale.jsx, /src/pages/SalesHistory.jsx, /src/pages/Inventory.jsx, /src/pages/Users.jsx, /src/components/Sidebar.jsx, /src/components/Topbar.jsx[22m
+[2m11:23:32 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Users.jsx, /src/index.css[22m
+[2m11:30:28 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/AppContext.jsx, /src/index.css[22m
+[2m11:30:28 p. m.[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/AppContext.jsx[22m Could not Fast Refresh ("useApp" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m11:30:28 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/index.css, /src/pages/Dashboard.jsx, /src/pages/SaleDetail.jsx, /src/pages/Login.jsx, /src/pages/NewSale.jsx, /src/pages/SalesHistory.jsx, /src/pages/Inventory.jsx, /src/pages/Users.jsx, /src/components/Sidebar.jsx, /src/components/Topbar.jsx[22m
+[2m11:30:42 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/AppContext.jsx, /src/index.css[22m
+[2m11:30:42 p. m.[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/AppContext.jsx[22m Could not Fast Refresh ("useApp" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m11:30:42 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/index.css, /src/pages/Dashboard.jsx, /src/pages/SaleDetail.jsx, /src/pages/Login.jsx, /src/pages/NewSale.jsx, /src/pages/SalesHistory.jsx, /src/pages/Inventory.jsx, /src/pages/Users.jsx, /src/components/Sidebar.jsx, /src/components/Topbar.jsx[22m
+[2m11:30:48 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/AppContext.jsx, /src/index.css[22m
+[2m11:30:48 p. m.[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/AppContext.jsx[22m Could not Fast Refresh ("useApp" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m11:30:48 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/index.css, /src/pages/Dashboard.jsx, /src/pages/SaleDetail.jsx, /src/pages/Login.jsx, /src/pages/NewSale.jsx, /src/pages/SalesHistory.jsx, /src/pages/Inventory.jsx, /src/pages/Users.jsx, /src/components/Sidebar.jsx, /src/components/Topbar.jsx[22m
+[2m11:36:22 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/NewSale.jsx, /src/index.css[22m
+[2m11:36:38 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/AppContext.jsx, /src/index.css[22m
+[2m11:36:38 p. m.[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/AppContext.jsx[22m Could not Fast Refresh ("useApp" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m11:36:38 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/index.css, /src/pages/Dashboard.jsx, /src/pages/SaleDetail.jsx, /src/pages/Login.jsx, /src/pages/NewSale.jsx, /src/pages/SalesHistory.jsx, /src/pages/Inventory.jsx, /src/pages/Users.jsx, /src/components/Sidebar.jsx, /src/components/Topbar.jsx[22m
+[2m11:36:46 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/AppContext.jsx, /src/index.css[22m
+[2m11:36:46 p. m.[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/AppContext.jsx[22m Could not Fast Refresh ("useApp" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m11:36:46 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/index.css, /src/pages/Dashboard.jsx, /src/pages/SaleDetail.jsx, /src/pages/Login.jsx, /src/pages/NewSale.jsx, /src/pages/SalesHistory.jsx, /src/pages/Inventory.jsx, /src/pages/Users.jsx, /src/components/Sidebar.jsx, /src/components/Topbar.jsx[22m
+[2m11:39:28 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/SaleRow.jsx, /src/index.css[22m
+[2m11:39:31 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/SalesHistory.jsx, /src/index.css[22m
+[2m11:39:34 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/SalesHistory.jsx, /src/index.css[22m
+[2m11:41:25 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/Topbar.jsx, /src/index.css[22m
+[2m11:57:10 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/AppContext.jsx, /src/index.css[22m
+[2m11:57:11 p. m.[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/AppContext.jsx[22m Could not Fast Refresh ("useApp" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m11:57:11 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/index.css, /src/pages/Dashboard.jsx, /src/pages/SaleDetail.jsx, /src/pages/Login.jsx, /src/pages/NewSale.jsx, /src/pages/SalesHistory.jsx, /src/pages/Inventory.jsx, /src/pages/Users.jsx, /src/components/Sidebar.jsx, /src/components/Topbar.jsx[22m
+[2m11:57:20 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/AppContext.jsx, /src/index.css[22m
+[2m11:57:20 p. m.[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/AppContext.jsx[22m Could not Fast Refresh ("useApp" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m11:57:20 p. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/index.css, /src/pages/Dashboard.jsx, /src/pages/SaleDetail.jsx, /src/pages/Login.jsx, /src/pages/NewSale.jsx, /src/pages/SalesHistory.jsx, /src/pages/Inventory.jsx, /src/pages/Users.jsx, /src/components/Sidebar.jsx, /src/components/Topbar.jsx[22m
+[2m12:07:49 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Inventory.jsx, /src/index.css[22m
+[2m12:07:59 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/AppContext.jsx, /src/index.css[22m
+[2m12:07:59 a. m.[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/AppContext.jsx[22m Could not Fast Refresh ("useApp" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m12:07:59 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/index.css, /src/pages/Dashboard.jsx, /src/pages/SaleDetail.jsx, /src/pages/Login.jsx, /src/pages/NewSale.jsx, /src/pages/SalesHistory.jsx, /src/pages/Inventory.jsx, /src/pages/Users.jsx, /src/components/Sidebar.jsx, /src/components/Topbar.jsx[22m
+[2m12:08:49 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/NewSale.jsx, /src/index.css[22m
+[2m12:08:53 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/NewSale.jsx, /src/index.css[22m
+[2m12:08:58 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/NewSale.jsx, /src/index.css[22m
+[2m12:09:02 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/NewSale.jsx, /src/index.css[22m
+[2m12:09:18 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/NewSale.jsx, /src/index.css[22m
+[2m12:09:24 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/SaleDetail.jsx, /src/index.css[22m
+[2m12:09:28 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/SaleDetail.jsx, /src/index.css[22m
+[2m12:09:37 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/SaleDetail.jsx, /src/index.css[22m
+[2m12:19:48 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/AppContext.jsx, /src/index.css[22m
+[2m12:19:48 a. m.[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/AppContext.jsx[22m Could not Fast Refresh ("useApp" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m12:19:48 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/index.css, /src/pages/Dashboard.jsx, /src/pages/SaleDetail.jsx, /src/pages/Login.jsx, /src/pages/NewSale.jsx, /src/pages/SalesHistory.jsx, /src/pages/Inventory.jsx, /src/pages/Users.jsx, /src/components/Sidebar.jsx, /src/components/Topbar.jsx[22m
+[2m12:19:52 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/AppContext.jsx, /src/index.css[22m
+[2m12:19:52 a. m.[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/AppContext.jsx[22m Could not Fast Refresh ("useApp" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m12:19:52 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/index.css, /src/pages/Dashboard.jsx, /src/pages/SaleDetail.jsx, /src/pages/Login.jsx, /src/pages/NewSale.jsx, /src/pages/SalesHistory.jsx, /src/pages/Inventory.jsx, /src/pages/Users.jsx, /src/components/Sidebar.jsx, /src/components/Topbar.jsx[22m
+[2m12:20:00 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/context/AppContext.jsx, /src/index.css[22m
+[2m12:20:01 a. m.[22m [36m[1m[vite][22m[39m [33mhmr invalidate [39m[2m/src/context/AppContext.jsx[22m Could not Fast Refresh ("useApp" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[2m12:20:01 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/App.jsx, /src/index.css, /src/pages/Dashboard.jsx, /src/pages/SaleDetail.jsx, /src/pages/Login.jsx, /src/pages/NewSale.jsx, /src/pages/SalesHistory.jsx, /src/pages/Inventory.jsx, /src/pages/Users.jsx, /src/components/Sidebar.jsx, /src/components/Topbar.jsx[22m
+[2m12:20:05 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Inventory.jsx, /src/index.css[22m
+[2m12:20:10 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Inventory.jsx, /src/index.css[22m
+[2m12:20:14 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Inventory.jsx, /src/index.css[22m
+[2m12:20:22 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Inventory.jsx, /src/index.css[22m
+[2m12:20:32 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Inventory.jsx, /src/index.css[22m
+[2m12:20:50 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/Inventory.jsx, /src/index.css[22m
+[2m12:21:01 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/ProductCard.jsx, /src/index.css[22m
+[2m12:21:06 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/NewSale.jsx, /src/index.css[22m
+[2m12:21:17 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/NewSale.jsx, /src/index.css[22m
+[2m12:21:35 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/NewSale.jsx, /src/index.css[22m
+[2m12:21:39 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/NewSale.jsx, /src/index.css[22m
+[2m12:21:56 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/CartItem.jsx, /src/index.css[22m
+[2m12:22:02 a. m.[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/SaleDetail.jsx, /src/index.css[22m
