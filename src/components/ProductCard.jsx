@@ -51,15 +51,9 @@ export default function ProductCard({ product, onEdit, onDelete }) {
       </div>
 
       {/* Pricing */}
-      <div className="grid grid-cols-2 gap-2 text-sm">
-        <div className="bg-gray-50 rounded-lg p-2 text-center">
-          <p className="text-xs text-gray-400 mb-0.5">Costo</p>
-          <p className="font-bold text-gray-700">{formatCOP(product.costPrice)}</p>
-        </div>
-        <div className="bg-primary-50 rounded-lg p-2 text-center">
-          <p className="text-xs text-primary-400 mb-0.5">Venta</p>
-          <p className="font-bold text-primary-700">{formatCOP(product.salePrice)}</p>
-        </div>
+      <div className="bg-primary-50 rounded-lg p-2 text-center text-sm">
+        <p className="text-xs text-primary-400 mb-0.5">Precio de venta</p>
+        <p className="font-bold text-primary-700">{formatCOP(product.salePrice)}</p>
       </div>
 
       {/* Stock + margin */}

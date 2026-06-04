@@ -79,25 +79,40 @@ export async function generateReceipt(sale) {
     })
     const finalY = doc.lastAutoTable.finalY + 3
     const rightX = pageWidth - margin
+    doc.setFont('courier', 'normal')
+    doc.setFontSize(8)
+    let sumY = finalY
+    // Subtotal siempre
+    doc.text('Subtotal:', rightX - 40, sumY)
+    doc.text(formatCOP(sale.subtotal), rightX, sumY, { align: 'right' })
+    sumY += 4
+    // Descuento
     if (sale.discount > 0) {
-      doc.text('Subtotal:', rightX - 40, finalY)
-      doc.text(formatCOP(sale.subtotal), rightX, finalY, { align: 'right' })
-      doc.text('Descuento:', rightX - 40, finalY + 4)
-      doc.text(`- ${formatCOP(sale.discount)}`, rightX, finalY + 4, { align: 'right' })
+      doc.text('Descuento:', rightX - 40, sumY)
+      doc.text(`- ${formatCOP(sale.discount)}`, rightX, sumY, { align: 'right' })
+      sumY += 4
     }
+    // Envío cobrado al cliente
+    if (sale.shippingCustomer > 0) {
+      doc.text('Domicilio:', rightX - 40, sumY)
+      doc.text(`+ ${formatCOP(sale.shippingCustomer)}`, rightX, sumY, { align: 'right' })
+      sumY += 4
+    }
+    doc.setLineWidth(0.2)
+    doc.line(rightX - 40, sumY, rightX, sumY)
+    sumY += 3
     doc.setFont('courier', 'bold')
     doc.setFontSize(9)
-    const totalY = sale.discount > 0 ? finalY + 9 : finalY
-    doc.text('TOTAL:', rightX - 40, totalY)
-    doc.text(formatCOP(sale.total), rightX, totalY, { align: 'right' })
+    doc.text('TOTAL:', rightX - 40, sumY)
+    doc.text(formatCOP(sale.total), rightX, sumY, { align: 'right' })
     doc.setLineWidth(0.3)
-    doc.line(margin, totalY + 3, pageWidth - margin, totalY + 3)
+    doc.line(margin, sumY + 3, pageWidth - margin, sumY + 3)
     doc.setFont('courier', 'bold')
     doc.setFontSize(8)
-    doc.text('¡Gracias por su compra!', pageWidth / 2, totalY + 8, { align: 'center' })
+    doc.text('¡Gracias por su compra!', pageWidth / 2, sumY + 8, { align: 'center' })
     doc.setFont('courier', 'normal')
     doc.setFontSize(7)
-    doc.text(STORE.slogan, pageWidth / 2, totalY + 13, { align: 'center' })
+    doc.text(STORE.slogan, pageWidth / 2, sumY + 13, { align: 'center' })
     doc.save(`recibo-${sale.id}.pdf`)
     return
   }
@@ -152,32 +167,36 @@ export async function generateReceipt(sale) {
 
   doc.setFont('courier', 'normal')
   doc.setFontSize(8)
-
+  let sumY2 = finalY
+  doc.text('Subtotal:', rightX - 40, sumY2)
+  doc.text(formatCOP(sale.subtotal), rightX, sumY2, { align: 'right' })
+  sumY2 += 4
   if (sale.discount > 0) {
-    doc.text('Subtotal:', rightX - 40, finalY)
-    doc.text(formatCOP(sale.subtotal), rightX, finalY, { align: 'right' })
-    doc.text('Descuento:', rightX - 40, finalY + 4)
-    doc.text(`- ${formatCOP(sale.discount)}`, rightX, finalY + 4, { align: 'right' })
+    doc.text('Descuento:', rightX - 40, sumY2)
+    doc.text(`- ${formatCOP(sale.discount)}`, rightX, sumY2, { align: 'right' })
+    sumY2 += 4
   }
-
+  if (sale.shippingCustomer > 0) {
+    doc.text('Domicilio:', rightX - 40, sumY2)
+    doc.text(`+ ${formatCOP(sale.shippingCustomer)}`, rightX, sumY2, { align: 'right' })
+    sumY2 += 4
+  }
+  doc.setLineWidth(0.2)
+  doc.line(rightX - 40, sumY2, rightX, sumY2)
+  sumY2 += 3
   doc.setFont('courier', 'bold')
   doc.setFontSize(9)
-  const totalY = sale.discount > 0 ? finalY + 9 : finalY
-  doc.text('TOTAL:', rightX - 40, totalY)
-  doc.text(formatCOP(sale.total), rightX, totalY, { align: 'right' })
-
+  doc.text('TOTAL:', rightX - 40, sumY2)
+  doc.text(formatCOP(sale.total), rightX, sumY2, { align: 'right' })
   doc.setLineWidth(0.3)
-  doc.line(margin, totalY + 3, pageWidth - margin, totalY + 3)
-
+  doc.line(margin, sumY2 + 3, pageWidth - margin, sumY2 + 3)
   doc.setFont('courier', 'bold')
   doc.setFontSize(8)
-  doc.text('¡Gracias por su compra!', pageWidth / 2, totalY + 8, { align: 'center' })
-
+  doc.text('¡Gracias por su compra!', pageWidth / 2, sumY2 + 8, { align: 'center' })
   doc.setFont('courier', 'normal')
   doc.setFontSize(7)
-  doc.text(STORE.slogan, pageWidth / 2, totalY + 13, { align: 'center' })
-  if (STORE.website) doc.text(STORE.website, pageWidth / 2, totalY + 17, { align: 'center' })
-
+  doc.text(STORE.slogan, pageWidth / 2, sumY2 + 13, { align: 'center' })
+  if (STORE.website) doc.text(STORE.website, pageWidth / 2, sumY2 + 17, { align: 'center' })
   doc.save(`recibo-${sale.id}.pdf`)
 }
 
@@ -232,12 +251,10 @@ export async function generateShippingLabel(sale) {
   if (logoDataUrl) {
     doc.addImage(logoDataUrl, 'JPEG', W / 2 - 16, 3, 32, 32)
   } else {
-    doc.setFillColor(0, 0, 0)
-    doc.rect(2, 2, W - 4, 18, 'F')
-    doc.setTextColor(255, 255, 255)
+    doc.setTextColor(0, 0, 0)
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(20)
-    doc.text(STORE.name, W / 2, 15, { align: 'center' })
+    doc.text(STORE.name, W / 2, 20, { align: 'center' })
   }
 
   // Línea separadora bajo el logo
@@ -265,15 +282,15 @@ export async function generateShippingLabel(sale) {
   doc.line(lx, 48, W - lx, 48)
 
   // ── Campos destinatario ───────────────────────────────────────────────────────
-  const fields = [
+  const allFields = [
     { label: 'Nombre',    value: sale.customer.name },
     { label: 'Celular',   value: sale.customer.phone },
     { label: 'Dirección', value: sale.customer.address },
     { label: 'Ciudad',    value: sale.customer.city },
-  ]
+  ].filter(f => f.value && String(f.value).trim() !== '')
 
   let y = 52
-  fields.forEach(({ label, value }) => {
+  allFields.forEach(({ label, value }) => {
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(6.5)
     doc.setTextColor(0, 0, 0)
@@ -282,7 +299,7 @@ export async function generateShippingLabel(sale) {
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(10)
     doc.setTextColor(0, 0, 0)
-    const display = doc.splitTextToSize(value, W - lx * 2)[0]
+    const display = doc.splitTextToSize(String(value), W - lx * 2)[0]
     doc.text(display, lx, y + 5.5)
 
     y += 10

@@ -25,7 +25,7 @@ export default function SaleDetail() {
   }
 
   const cost = sale.items.reduce((s, i) => s + i.cost * i.qty, 0)
-  const profit = sale.total - cost - (sale.shippingSubsidy || 0)
+  const profit = sale.total - cost - (sale.shippingReal || 0)
   const margin = sale.total > 0 ? (profit / sale.total) * 100 : 0
 
   return (

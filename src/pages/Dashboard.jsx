@@ -26,7 +26,7 @@ export default function Dashboard() {
   } = useMemo(() => {
     const totalRevenue = sales.reduce((s, sale) => s + sale.total, 0)
     const totalCost = sales.reduce((s, sale) =>
-      s + sale.items.reduce((ss, i) => ss + i.cost * i.qty, 0), 0)
+      s + sale.items.reduce((ss, i) => ss + i.cost * i.qty, 0) + (sale.shippingReal || 0), 0)
     const grossProfit = totalRevenue - totalCost
     const profitMargin = totalRevenue > 0 ? (grossProfit / totalRevenue) * 100 : 0
     const inventoryValue = products.reduce((s, p) => s + p.costPrice * p.stock, 0)
@@ -46,7 +46,7 @@ export default function Dashboard() {
       if (!dailyMap[key]) dailyMap[key] = { revenue: 0, profit: 0 }
       const cost = sale.items.reduce((s, i) => s + i.cost * i.qty, 0)
       dailyMap[key].revenue += sale.total
-      dailyMap[key].profit += sale.total - cost
+      dailyMap[key].profit += sale.total - cost - (sale.shippingReal || 0)
     })
     const dailyData = days.map(d => ({
       label: d.label,
