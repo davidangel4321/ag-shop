@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react'
-import { Search, X, Calendar, ShoppingBag } from 'lucide-react'
+import { Search, X, Calendar, ShoppingBag, Download } from 'lucide-react'
 import { useApp } from '../context/AppContext'
 import SaleRow from '../components/SaleRow'
-import { formatCOP } from '../utils/format'
+import { formatCOP, formatDateTime } from '../utils/format'
 
 export default function SalesHistory() {
   const { sales, deleteSale } = useApp()
@@ -33,6 +33,35 @@ export default function SalesHistory() {
     setDateTo('')
   }
 
+  function exportCSV() {
+    const rows = [
+      ['ID', 'Fecha', 'Cliente', 'Celular', 'Dirección', 'Ciudad', 'Productos', 'Subtotal', 'Descuento', 'Domicilio cliente', 'Costo envío real', 'Total', 'Método pago'],
+      ...filtered.map(s => [
+        s.id,
+        formatDateTime(s.date),
+        s.customer.name,
+        s.customer.phone || '',
+        s.customer.address || '',
+        s.customer.city,
+        s.items.map(i => `${i.name}${i.variantSize ? ` (${i.variantSize})` : ''} x${i.qty}`).join(' | '),
+        s.subtotal,
+        s.discount || 0,
+        s.shippingCustomer || 0,
+        s.shippingReal || 0,
+        s.total,
+        s.paymentMethod,
+      ])
+    ]
+    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n')
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `ventas-${new Date().toISOString().split('T')[0]}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   const hasFilters = search || dateFrom || dateTo
 
   return (
@@ -51,6 +80,15 @@ export default function SalesHistory() {
               <p className="font-bold text-gray-900 text-sm">{formatCOP(totalFiltered)}</p>
             </div>
           </div>
+          <button
+            onClick={exportCSV}
+            disabled={filtered.length === 0}
+            className="btn-secondary disabled:opacity-40"
+            title="Exportar ventas a CSV"
+          >
+            <Download size={16} />
+            Exportar
+          </button>
         </div>
       </div>
 

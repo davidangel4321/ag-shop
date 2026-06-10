@@ -40,9 +40,16 @@ export default function Dashboard() {
       const key = d.toISOString().split('T')[0]
       days.push({ date: key, label: `${d.getDate()}/${d.getMonth() + 1}` })
     }
+    // Convertir fecha ISO a fecha local Colombia (UTC-5)
+    const toLocalKey = (isoDate) => {
+      const d = new Date(isoDate)
+      const local = new Date(d.getTime() - 5 * 60 * 60 * 1000)
+      return local.toISOString().split('T')[0]
+    }
+
     const dailyMap = {}
     sales.forEach(sale => {
-      const key = sale.date.split('T')[0]
+      const key = toLocalKey(sale.date)
       if (!dailyMap[key]) dailyMap[key] = { revenue: 0, profit: 0 }
       const cost = sale.items.reduce((s, i) => s + i.cost * i.qty, 0)
       dailyMap[key].revenue += sale.total
