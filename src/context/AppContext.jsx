@@ -255,6 +255,33 @@ export function AppProvider({ children }) {
   }
 
   async function deleteSale(id) {
+    const sale = state.sales.find(s => s.id === id)
+
+    // Restaurar stock de los productos vendidos
+    if (sale) {
+      const restoredProducts = state.products.map(p => {
+        const item = sale.items.find(i => i.productId === p.id)
+        if (!item) return p
+        if (item.variantSize && p.variants && p.variants.length > 0) {
+          const updatedVariants = p.variants.map(v =>
+            v.size === item.variantSize ? { ...v, stock: v.stock + item.qty } : v
+          )
+          return { ...p, variants: updatedVariants, stock: updatedVariants.reduce((s, v) => s + v.stock, 0) }
+        }
+        return { ...p, stock: p.stock + item.qty }
+      })
+
+      await Promise.all(
+        restoredProducts
+          .filter(p => sale.items.find(i => i.productId === p.id))
+          .map(p => p.variants && p.variants.length > 0
+            ? updateProductStock(p.id, { stock: p.stock, variants: p.variants })
+            : updateStockOnly(p.id, p.stock)
+          )
+      )
+      dispatch({ type: 'LOAD_PRODUCTS', payload: restoredProducts })
+    }
+
     await deleteDocument('sales', id)
     dispatch({ type: 'DELETE_SALE', payload: id })
   }
