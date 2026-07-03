@@ -8,6 +8,7 @@ import {
   LogOut,
   X,
   Users,
+  Building2,
 } from 'lucide-react'
 import { useApp } from '../context/AppContext'
 
@@ -78,20 +79,36 @@ export default function Sidebar({ open, onClose }) {
             </NavLink>
           ))}
           {currentUser?.role === 'admin' && (
-            <NavLink
-              to="/users"
-              onClick={onClose}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                  isActive
-                    ? 'bg-white/15 text-white shadow-sm'
-                    : 'text-primary-200 hover:bg-white/10 hover:text-white'
-                }`
-              }
-            >
-              <Users size={20} />
-              Usuarios
-            </NavLink>
+            <>
+              <NavLink
+                to="/users"
+                onClick={onClose}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                    isActive
+                      ? 'bg-white/15 text-white shadow-sm'
+                      : 'text-primary-200 hover:bg-white/10 hover:text-white'
+                  }`
+                }
+              >
+                <Users size={20} />
+                Usuarios
+              </NavLink>
+              <NavLink
+                to="/agencies"
+                onClick={onClose}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                    isActive
+                      ? 'bg-white/15 text-white shadow-sm'
+                      : 'text-primary-200 hover:bg-white/10 hover:text-white'
+                  }`
+                }
+              >
+                <Building2 size={20} />
+                Agencias
+              </NavLink>
+            </>
           )}
         </nav>
 

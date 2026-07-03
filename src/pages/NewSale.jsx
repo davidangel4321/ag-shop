@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import { Search, ShoppingCart, X, CheckCircle, User, MapPin, Phone, CreditCard, Banknote, Tag, Truck } from 'lucide-react'
+import { Search, ShoppingCart, X, CheckCircle, User, MapPin, Phone, CreditCard, Banknote, Tag, Truck, Building2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
@@ -10,7 +10,8 @@ import { generateReceipt, generateShippingLabel } from '../utils/pdf'
 const PAYMENT_METHODS = ['Efectivo', 'Tarjeta', 'Transferencia', 'Nequi', 'Daviplata', 'Contra entrega']
 
 export default function NewSale() {
-  const { products, addSale } = useApp()
+  const { products, addSale, currentUser, currentAgencyId, agencies } = useApp()
+  const [saleAgencyId, setSaleAgencyId] = useState(currentAgencyId || '')
   const navigate = useNavigate()
 
   const [search, setSearch] = useState('')
@@ -23,14 +24,21 @@ export default function NewSale() {
   const [shippingCustomer, setShippingCustomer] = useState(0)
   const [confirming, setConfirming] = useState(false)
 
+  const activeAgencyId = currentAgencyId || saleAgencyId || null
+
+  const agencyProducts = useMemo(() => {
+    if (!activeAgencyId) return products
+    return products.filter(p => p.agencyId === activeAgencyId)
+  }, [products, activeAgencyId])
+
   const searchResults = useMemo(() => {
     if (!search.trim()) return []
     const q = search.toLowerCase()
-    return products.filter(p =>
+    return agencyProducts.filter(p =>
       p.stock > 0 &&
       (p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q))
     ).slice(0, 6)
-  }, [search, products])
+  }, [search, agencyProducts])
 
   function handleAddProduct(product) {
     if (product.variants && product.variants.length > 0) {
@@ -111,6 +119,7 @@ export default function NewSale() {
         shippingSubsidy,
         total,
         paymentMethod,
+        agencyId: activeAgencyId || null,
       }
       const sale = await addSale(saleData)
 
@@ -261,6 +270,26 @@ export default function NewSale() {
 
         {/* Right: customer info + summary */}
         <div className="space-y-4">
+          {/* Agency selector — admin viewing all */}
+          {currentUser?.role === 'admin' && !currentAgencyId && agencies.length > 0 && (
+            <div className="card">
+              <h2 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <Building2 size={18} className="text-primary-600" />
+                Agencia de la venta
+              </h2>
+              <select
+                className="input"
+                value={saleAgencyId}
+                onChange={e => setSaleAgencyId(e.target.value)}
+              >
+                <option value="">Sin agencia específica</option>
+                {agencies.map(a => (
+                  <option key={a.id} value={a.id}>{a.name} — {a.city}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
           {/* Customer */}
           <div className="card">
             <h2 className="font-bold text-gray-900 mb-4 flex items-center gap-2">

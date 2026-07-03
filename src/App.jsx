@@ -10,6 +10,7 @@ import NewSale from './pages/NewSale'
 import SalesHistory from './pages/SalesHistory'
 import SaleDetail from './pages/SaleDetail'
 import Users from './pages/Users'
+import Agencies from './pages/Agencies'
 
 function PrivateRoute({ children }) {
   const { currentUser } = useApp()
@@ -68,6 +69,14 @@ function AppRoutes() {
           element={
             <AdminRoute>
               <Users />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="agencies"
+          element={
+            <AdminRoute>
+              <Agencies />
             </AdminRoute>
           }
         />

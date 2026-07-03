@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Legend
@@ -11,51 +11,102 @@ import KPICard from '../components/KPICard'
 import SaleRow from '../components/SaleRow'
 import { formatCOP, formatDate } from '../utils/format'
 
+const PERIODS = [
+  { key: 'month', label: 'Este mes' },
+  { key: 'year', label: 'Este año' },
+  { key: 'all', label: 'Total' },
+]
+
 function copFormatter(v) {
   if (v >= 1000000) return `$${(v / 1000000).toFixed(1)}M`
   if (v >= 1000) return `$${(v / 1000).toFixed(0)}K`
   return `$${v}`
 }
 
+function toLocalKey(isoDate) {
+  const d = new Date(isoDate)
+  const local = new Date(d.getTime() - 5 * 60 * 60 * 1000)
+  return local.toISOString().split('T')[0]
+}
+
 export default function Dashboard() {
-  const { sales, products } = useApp()
+  const { sales, products, currentAgencyId, agencies } = useApp()
+  const [period, setPeriod] = useState('month')
+
+  const filteredSales = useMemo(() => {
+    const now = new Date()
+    return sales.filter(sale => {
+      const matchAgency = !currentAgencyId || sale.agencyId === currentAgencyId
+      if (!matchAgency) return false
+      if (period === 'all') return true
+      const saleDate = new Date(sale.date)
+      if (period === 'month') {
+        return saleDate.getFullYear() === now.getFullYear() &&
+          saleDate.getMonth() === now.getMonth()
+      }
+      if (period === 'year') {
+        return saleDate.getFullYear() === now.getFullYear()
+      }
+      return true
+    })
+  }, [sales, currentAgencyId, period])
+
+  const filteredProducts = useMemo(() => {
+    if (!currentAgencyId) return products
+    return products.filter(p => p.agencyId === currentAgencyId)
+  }, [products, currentAgencyId])
 
   const {
     totalRevenue, totalCost, grossProfit, profitMargin,
-    inventoryValue, dailyData, topProducts, recentSales
+    inventoryValue, chartData, topProducts, recentSales
   } = useMemo(() => {
-    const totalRevenue = sales.reduce((s, sale) => s + sale.total, 0)
-    const totalCost = sales.reduce((s, sale) =>
+    const totalRevenue = filteredSales.reduce((s, sale) => s + sale.total, 0)
+    const totalCost = filteredSales.reduce((s, sale) =>
       s + sale.items.reduce((ss, i) => ss + i.cost * i.qty, 0) + (sale.shippingReal || 0), 0)
     const grossProfit = totalRevenue - totalCost
     const profitMargin = totalRevenue > 0 ? (grossProfit / totalRevenue) * 100 : 0
-    const inventoryValue = products.reduce((s, p) => s + p.costPrice * p.stock, 0)
+    const inventoryValue = filteredProducts.reduce((s, p) => s + p.costPrice * p.stock, 0)
 
-    // Daily data - last 30 days
+    // Chart data
     const now = new Date()
-    const days = []
-    for (let i = 29; i >= 0; i--) {
-      const d = new Date(now)
-      d.setDate(d.getDate() - i)
-      const key = d.toISOString().split('T')[0]
-      days.push({ date: key, label: `${d.getDate()}/${d.getMonth() + 1}` })
-    }
-    // Convertir fecha ISO a fecha local Colombia (UTC-5)
-    const toLocalKey = (isoDate) => {
-      const d = new Date(isoDate)
-      const local = new Date(d.getTime() - 5 * 60 * 60 * 1000)
-      return local.toISOString().split('T')[0]
+    let days = []
+    if (period === 'month') {
+      for (let i = 29; i >= 0; i--) {
+        const d = new Date(now)
+        d.setDate(d.getDate() - i)
+        const key = d.toISOString().split('T')[0]
+        days.push({ date: key, label: `${d.getDate()}/${d.getMonth() + 1}` })
+      }
+    } else if (period === 'year') {
+      for (let m = 0; m <= now.getMonth(); m++) {
+        const key = `${now.getFullYear()}-${String(m + 1).padStart(2, '0')}`
+        const monthNames = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
+        days.push({ date: key, label: monthNames[m], isMonth: true })
+      }
+    } else {
+      for (let i = 29; i >= 0; i--) {
+        const d = new Date(now)
+        d.setDate(d.getDate() - i)
+        const key = d.toISOString().split('T')[0]
+        days.push({ date: key, label: `${d.getDate()}/${d.getMonth() + 1}` })
+      }
     }
 
     const dailyMap = {}
-    sales.forEach(sale => {
-      const key = toLocalKey(sale.date)
+    filteredSales.forEach(sale => {
+      let key
+      if (period === 'year') {
+        const d = new Date(sale.date)
+        key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+      } else {
+        key = toLocalKey(sale.date)
+      }
       if (!dailyMap[key]) dailyMap[key] = { revenue: 0, profit: 0 }
       const cost = sale.items.reduce((s, i) => s + i.cost * i.qty, 0)
       dailyMap[key].revenue += sale.total
       dailyMap[key].profit += sale.total - cost - (sale.shippingReal || 0)
     })
-    const dailyData = days.map(d => ({
+    const chartData = days.map(d => ({
       label: d.label,
       Ventas: dailyMap[d.date]?.revenue || 0,
       Ganancia: dailyMap[d.date]?.profit || 0,
@@ -63,7 +114,7 @@ export default function Dashboard() {
 
     // Top products
     const productSales = {}
-    sales.forEach(sale => {
+    filteredSales.forEach(sale => {
       sale.items.forEach(item => {
         if (!productSales[item.productId]) {
           productSales[item.productId] = { name: item.name, qty: 0, revenue: 0 }
@@ -77,17 +128,44 @@ export default function Dashboard() {
       .slice(0, 5)
       .map(p => ({ name: p.name.substring(0, 16), Ingresos: p.revenue, Unidades: p.qty }))
 
-    const recentSales = [...sales].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)
+    const recentSales = [...filteredSales].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5)
 
-    return { totalRevenue, totalCost, grossProfit, profitMargin, inventoryValue, dailyData, topProducts, recentSales }
-  }, [sales, products])
+    return { totalRevenue, totalCost, grossProfit, profitMargin, inventoryValue, chartData, topProducts, recentSales }
+  }, [filteredSales, filteredProducts, period])
+
+  const agencyLabel = currentAgencyId && agencies.length > 0
+    ? agencies.find(a => a.id === currentAgencyId)?.name || ''
+    : null
+
+  const chartLabel = period === 'month' ? 'Ventas últimos 30 días' :
+    period === 'year' ? 'Ventas por mes (este año)' : 'Ventas últimos 30 días'
 
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <div>
-        <h1 className="text-2xl font-black text-gray-900">Dashboard</h1>
-        <p className="text-gray-500 text-sm mt-1">Resumen general de tu negocio</p>
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-black text-gray-900">Dashboard</h1>
+          <p className="text-gray-500 text-sm mt-1">
+            {agencyLabel ? `Agencia: ${agencyLabel}` : 'Resumen general de tu negocio'}
+          </p>
+        </div>
+        {/* Period tabs */}
+        <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-xl self-start">
+          {PERIODS.map(p => (
+            <button
+              key={p.key}
+              onClick={() => setPeriod(p.key)}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                period === p.key
+                  ? 'bg-white text-primary-700 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              {p.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* KPIs */}
@@ -95,7 +173,7 @@ export default function Dashboard() {
         <KPICard
           title="Ingresos Totales"
           value={formatCOP(totalRevenue)}
-          subtitle={`${sales.length} ventas`}
+          subtitle={`${filteredSales.length} ventas`}
           icon={DollarSign}
           color="purple"
         />
@@ -130,7 +208,9 @@ export default function Dashboard() {
         <div>
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Valor del Inventario</p>
           <p className="text-xl font-black text-gray-900">{formatCOP(inventoryValue)}</p>
-          <p className="text-xs text-gray-400">{products.length} productos • {products.reduce((s,p)=>s+p.stock,0)} unidades totales</p>
+          <p className="text-xs text-gray-400">
+            {filteredProducts.length} productos • {filteredProducts.reduce((s, p) => s + p.stock, 0)} unidades totales
+          </p>
         </div>
       </div>
 
@@ -138,9 +218,9 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Area chart */}
         <div className="card xl:col-span-2">
-          <h2 className="font-bold text-gray-900 mb-4">Ventas últimos 30 días</h2>
+          <h2 className="font-bold text-gray-900 mb-4">{chartLabel}</h2>
           <ResponsiveContainer width="100%" height={260}>
-            <AreaChart data={dailyData} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
+            <AreaChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorVentas" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#8B1A1A" stopOpacity={0.2} />
@@ -155,7 +235,7 @@ export default function Dashboard() {
               <XAxis
                 dataKey="label"
                 tick={{ fontSize: 10, fill: '#9ca3af' }}
-                interval={4}
+                interval={period === 'year' ? 0 : 4}
                 axisLine={false}
                 tickLine={false}
               />

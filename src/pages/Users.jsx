@@ -9,10 +9,11 @@ const EMPTY_FORM = {
   password: '',
   role: 'vendedor',
   active: true,
+  agencyId: '',
 }
 
 export default function UsersPage() {
-  const { users, currentUser, addUser, updateUser, deleteUser, changePassword } = useApp()
+  const { users, currentUser, addUser, updateUser, deleteUser, changePassword, agencies } = useApp()
   const [showModal, setShowModal] = useState(false)
   const [editingUser, setEditingUser] = useState(null)
   const [form, setForm] = useState(EMPTY_FORM)
@@ -35,6 +36,7 @@ export default function UsersPage() {
       password: user.password,
       role: user.role,
       active: user.active,
+      agencyId: user.agencyId || '',
     })
     setShowPassword(false)
     setPwSection({ newPassword: '', confirmPassword: '', show: false })
@@ -134,6 +136,7 @@ export default function UsersPage() {
                 <th className="text-left px-6 py-3 text-gray-500 font-semibold">Nombre</th>
                 <th className="text-left px-6 py-3 text-gray-500 font-semibold">Usuario</th>
                 <th className="text-left px-6 py-3 text-gray-500 font-semibold">Rol</th>
+                <th className="text-left px-6 py-3 text-gray-500 font-semibold hidden md:table-cell">Agencia</th>
                 <th className="text-left px-6 py-3 text-gray-500 font-semibold">Estado</th>
                 <th className="text-right px-6 py-3 text-gray-500 font-semibold">Acciones</th>
               </tr>
@@ -171,6 +174,12 @@ export default function UsersPage() {
                         {user.role === 'admin' ? <Shield size={11} /> : <UserCheck size={11} />}
                         {user.role === 'admin' ? 'Admin' : 'Vendedor'}
                       </span>
+                    </td>
+                    <td className="px-6 py-4 hidden md:table-cell">
+                      {user.agencyId
+                        ? <span className="text-xs text-gray-700 font-semibold">{agencies.find(a => a.id === user.agencyId)?.name || '—'}</span>
+                        : <span className="text-xs text-gray-400">—</span>
+                      }
                     </td>
                     <td className="px-6 py-4">
                       <span
@@ -284,6 +293,22 @@ export default function UsersPage() {
                   <option value="admin">Administrador</option>
                 </select>
               </div>
+
+              {agencies.length > 0 && (
+                <div>
+                  <label className="label">Agencia asignada</label>
+                  <select
+                    className="input"
+                    value={form.agencyId}
+                    onChange={e => setForm(f => ({ ...f, agencyId: e.target.value }))}
+                  >
+                    <option value="">Sin agencia</option>
+                    {agencies.map(a => (
+                      <option key={a.id} value={a.id}>{a.name} — {a.city}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
                 <div>

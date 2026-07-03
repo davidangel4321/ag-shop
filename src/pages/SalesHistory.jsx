@@ -5,7 +5,7 @@ import SaleRow from '../components/SaleRow'
 import { formatCOP, formatDateTime } from '../utils/format'
 
 export default function SalesHistory() {
-  const { sales, deleteSale } = useApp()
+  const { sales, deleteSale, currentAgencyId, agencies } = useApp()
   const [search, setSearch] = useState('')
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
@@ -13,6 +13,7 @@ export default function SalesHistory() {
   const filtered = useMemo(() => {
     return sales
       .filter(sale => {
+        const matchAgency = !currentAgencyId || sale.agencyId === currentAgencyId
         const matchSearch = !search ||
           sale.id.toLowerCase().includes(search.toLowerCase()) ||
           sale.customer.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -20,10 +21,10 @@ export default function SalesHistory() {
         const saleDate = sale.date.split('T')[0]
         const matchFrom = !dateFrom || saleDate >= dateFrom
         const matchTo = !dateTo || saleDate <= dateTo
-        return matchSearch && matchFrom && matchTo
+        return matchAgency && matchSearch && matchFrom && matchTo
       })
       .sort((a, b) => new Date(b.date) - new Date(a.date))
-  }, [sales, search, dateFrom, dateTo])
+  }, [sales, search, dateFrom, dateTo, currentAgencyId])
 
   const totalFiltered = filtered.reduce((s, sale) => s + sale.total, 0)
 
@@ -70,7 +71,12 @@ export default function SalesHistory() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-gray-900">Historial de Ventas</h1>
-          <p className="text-gray-500 text-sm mt-1">{sales.length} ventas registradas</p>
+          <p className="text-gray-500 text-sm mt-1">
+            {sales.length} ventas registradas
+            {currentAgencyId && agencies.length > 0
+              ? ` — ${agencies.find(a => a.id === currentAgencyId)?.name || ''}`
+              : ''}
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <div className="card py-3 px-4 flex items-center gap-3">

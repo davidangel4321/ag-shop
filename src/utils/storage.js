@@ -3,6 +3,8 @@ export const KEYS = {
   SALES: 'agshop_sales',
   AUTH: 'agshop_auth',
   USERS: 'agshop_users',
+  AGENCIES: 'agshop_agencies',
+  SELECTED_AGENCY: 'agshop_selected_agency',
 }
 
 export function getItem(key, fallback = null) {

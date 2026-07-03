@@ -18,6 +18,8 @@ const initialState = {
   products: [],
   sales: [],
   users: [],
+  agencies: [],
+  selectedAgency: null,
 }
 
 // ── Reducer ──────────────────────────────────────────────────────────────────
@@ -26,7 +28,7 @@ function reducer(state, action) {
     case 'SET_USER':
       return { ...state, currentUser: action.payload }
     case 'LOGOUT':
-      return { ...state, currentUser: null }
+      return { ...state, currentUser: null, selectedAgency: null }
     case 'LOAD_PRODUCTS':
       return { ...state, products: action.payload }
     case 'ADD_PRODUCT':
@@ -60,6 +62,19 @@ function reducer(state, action) {
       }
     case 'DELETE_USER':
       return { ...state, users: state.users.filter(u => u.id !== action.payload) }
+    case 'LOAD_AGENCIES':
+      return { ...state, agencies: action.payload }
+    case 'ADD_AGENCY':
+      return { ...state, agencies: [...state.agencies, action.payload] }
+    case 'UPDATE_AGENCY':
+      return {
+        ...state,
+        agencies: state.agencies.map(a => a.id === action.payload.id ? action.payload : a),
+      }
+    case 'DELETE_AGENCY':
+      return { ...state, agencies: state.agencies.filter(a => a.id !== action.payload) }
+    case 'SET_SELECTED_AGENCY':
+      return { ...state, selectedAgency: action.payload }
     default:
       return state
   }
@@ -83,6 +98,16 @@ export function AppProvider({ children }) {
         } else if (authData) {
           removeItem(KEYS.AUTH)
         }
+
+        // Restore selected agency
+        const savedAgency = getItem(KEYS.SELECTED_AGENCY)
+        if (savedAgency !== null) {
+          dispatch({ type: 'SET_SELECTED_AGENCY', payload: savedAgency })
+        }
+
+        // Load agencies from Firestore
+        const agencies = await getCollection('agencies')
+        dispatch({ type: 'LOAD_AGENCIES', payload: agencies })
 
         // Load products from Firestore
         const products = await getCollection('products')
@@ -110,7 +135,6 @@ export function AppProvider({ children }) {
 
   // ── Actions ────────────────────────────────────────────────────────────────
   async function login(username, password) {
-    // Si usuarios no cargaron aún, intentar cargar directamente de Firestore
     let users = state.users
     if (!users || users.length === 0) {
       try {
@@ -118,7 +142,6 @@ export function AppProvider({ children }) {
         if (users && users.length > 0) {
           dispatch({ type: 'LOAD_USERS', payload: users })
         } else {
-          // Seed admin si no existe y validar contra default
           await setDocument('users', DEFAULT_ADMIN.id, DEFAULT_ADMIN)
           users = [DEFAULT_ADMIN]
           dispatch({ type: 'LOAD_USERS', payload: users })
@@ -131,7 +154,13 @@ export function AppProvider({ children }) {
       u => u.username === username && u.password === password && u.active === true
     )
     if (found) {
-      const user = { id: found.id, username: found.username, role: found.role, name: found.name }
+      const user = {
+        id: found.id,
+        username: found.username,
+        role: found.role,
+        name: found.name,
+        agencyId: found.agencyId || null,
+      }
       const authData = {
         user,
         token: btoa(`${username}:${Date.now()}`),
@@ -142,6 +171,11 @@ export function AppProvider({ children }) {
       return true
     }
     return false
+  }
+
+  function setSelectedAgency(agencyId) {
+    setItem(KEYS.SELECTED_AGENCY, agencyId)
+    dispatch({ type: 'SET_SELECTED_AGENCY', payload: agencyId })
   }
 
   async function addUser(userData) {
@@ -158,9 +192,14 @@ export function AppProvider({ children }) {
   async function updateUser(user) {
     await updateDocument('users', user.id, user)
     dispatch({ type: 'UPDATE_USER', payload: user })
-    // If updating current user's own data, refresh auth
     if (state.currentUser && user.id === state.currentUser.id) {
-      const refreshed = { id: user.id, username: user.username, role: user.role, name: user.name }
+      const refreshed = {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+        name: user.name,
+        agencyId: user.agencyId || null,
+      }
       const authData = getItem(KEYS.AUTH)
       if (authData) {
         setItem(KEYS.AUTH, { ...authData, user: refreshed })
@@ -188,6 +227,7 @@ export function AppProvider({ children }) {
 
   function logout() {
     removeItem(KEYS.AUTH)
+    removeItem(KEYS.SELECTED_AGENCY)
     dispatch({ type: 'LOGOUT' })
   }
 
@@ -257,7 +297,6 @@ export function AppProvider({ children }) {
   async function deleteSale(id) {
     const sale = state.sales.find(s => s.id === id)
 
-    // Restaurar stock de los productos vendidos
     if (sale) {
       const restoredProducts = state.products.map(p => {
         const item = sale.items.find(i => i.productId === p.id)
@@ -286,11 +325,40 @@ export function AppProvider({ children }) {
     dispatch({ type: 'DELETE_SALE', payload: id })
   }
 
+  async function addAgency(data) {
+    const newAgency = {
+      ...data,
+      id: `agency-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+    }
+    await setDocument('agencies', newAgency.id, newAgency)
+    dispatch({ type: 'ADD_AGENCY', payload: newAgency })
+    return newAgency
+  }
+
+  async function updateAgency(agency) {
+    await updateDocument('agencies', agency.id, agency)
+    dispatch({ type: 'UPDATE_AGENCY', payload: agency })
+  }
+
+  async function deleteAgency(id) {
+    await deleteDocument('agencies', id)
+    dispatch({ type: 'DELETE_AGENCY', payload: id })
+  }
+
+  // currentAgencyId: null = admin viendo todo, agencyId = filtro activo
+  const currentAgencyId =
+    state.currentUser?.role === 'admin'
+      ? state.selectedAgency
+      : (state.currentUser?.agencyId || null)
+
   const value = {
     ...state,
     loading,
+    currentAgencyId,
     login,
     logout,
+    setSelectedAgency,
     addProduct,
     updateProduct,
     deleteProduct,
@@ -300,6 +368,9 @@ export function AppProvider({ children }) {
     updateUser,
     deleteUser,
     changePassword,
+    addAgency,
+    updateAgency,
+    deleteAgency,
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>

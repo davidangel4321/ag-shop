@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Menu, Bell, AlertTriangle, PackageX } from 'lucide-react'
+import { Menu, Bell, AlertTriangle, PackageX, Building2, ChevronDown } from 'lucide-react'
 import { useApp } from '../context/AppContext'
 
 export default function Topbar({ onMenuClick }) {
-  const { products, currentUser } = useApp()
+  const { products, currentUser, agencies, selectedAgency, setSelectedAgency } = useApp()
   const [open, setOpen] = useState(false)
+  const [agencyOpen, setAgencyOpen] = useState(false)
   const ref = useRef(null)
+  const agencyRef = useRef(null)
 
   const lowStockItems = products.filter(p => p.stock > 0 && p.stock < 5)
   const outOfStockItems = products.filter(p => p.stock === 0)
@@ -14,6 +16,7 @@ export default function Topbar({ onMenuClick }) {
   useEffect(() => {
     function handleClick(e) {
       if (ref.current && !ref.current.contains(e.target)) setOpen(false)
+      if (agencyRef.current && !agencyRef.current.contains(e.target)) setAgencyOpen(false)
     }
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
@@ -22,6 +25,10 @@ export default function Topbar({ onMenuClick }) {
   const initials = currentUser?.name
     ? currentUser.name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()
     : 'A'
+
+  const selectedAgencyName = selectedAgency
+    ? agencies.find(a => a.id === selectedAgency)?.name || 'Agencia'
+    : 'Todo el negocio'
 
   return (
     <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-4 lg:px-6 shadow-sm">
@@ -39,6 +46,56 @@ export default function Topbar({ onMenuClick }) {
       </div>
 
       <div className="flex items-center gap-3 ml-auto">
+        {/* Agency selector — admin only */}
+        {currentUser?.role === 'admin' && agencies.length > 0 && (
+          <div className="relative" ref={agencyRef}>
+            <button
+              onClick={() => setAgencyOpen(v => !v)}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-primary-50 hover:bg-primary-100 text-primary-700 text-sm font-semibold transition-colors"
+            >
+              <Building2 size={15} />
+              <span className="hidden sm:inline max-w-[140px] truncate">{selectedAgencyName}</span>
+              <ChevronDown size={14} className={`transition-transform ${agencyOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {agencyOpen && (
+              <div className="absolute right-0 top-11 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden">
+                <div className="px-4 py-3 border-b border-gray-100">
+                  <p className="font-bold text-gray-900 text-sm">Vista de agencia</p>
+                </div>
+                <div className="max-h-64 overflow-y-auto">
+                  <button
+                    onClick={() => { setSelectedAgency(null); setAgencyOpen(false) }}
+                    className={`w-full flex items-center gap-3 px-4 py-3 text-left text-sm transition-colors hover:bg-gray-50 ${
+                      !selectedAgency ? 'bg-primary-50 text-primary-700 font-semibold' : 'text-gray-700'
+                    }`}
+                  >
+                    <Building2 size={15} className="shrink-0" />
+                    Todo el negocio
+                  </button>
+                  {agencies.map(agency => (
+                    <button
+                      key={agency.id}
+                      onClick={() => { setSelectedAgency(agency.id); setAgencyOpen(false) }}
+                      className={`w-full flex items-center gap-3 px-4 py-3 text-left text-sm transition-colors hover:bg-gray-50 ${
+                        selectedAgency === agency.id ? 'bg-primary-50 text-primary-700 font-semibold' : 'text-gray-700'
+                      }`}
+                    >
+                      <div className="w-5 h-5 rounded-full bg-primary-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                        {agency.name[0]?.toUpperCase()}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-semibold truncate">{agency.name}</p>
+                        <p className="text-xs text-gray-400">{agency.city}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {alerts > 0 && (
           <div className="relative" ref={ref}>
             <button

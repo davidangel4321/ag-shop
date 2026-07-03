@@ -19,34 +19,41 @@ const EMPTY_FORM = {
 }
 
 export default function Inventory() {
-  const { products, addProduct, updateProduct, deleteProduct } = useApp()
+  const { products, addProduct, updateProduct, deleteProduct, currentUser, currentAgencyId, agencies } = useApp()
   const [search, setSearch] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('all')
   const [showModal, setShowModal] = useState(false)
   const [editingProduct, setEditingProduct] = useState(null)
   const [form, setForm] = useState(EMPTY_FORM)
+  const [formAgencyId, setFormAgencyId] = useState('')
   const [hasVariants, setHasVariants] = useState(false)
   const [photoPreview, setPhotoPreview] = useState(null)
   const fileRef = useRef()
 
+  const agencyProducts = useMemo(() => {
+    if (!currentAgencyId) return products
+    return products.filter(p => p.agencyId === currentAgencyId)
+  }, [products, currentAgencyId])
+
   const filtered = useMemo(() => {
-    return products.filter(p => {
+    return agencyProducts.filter(p => {
       const matchSearch = !search ||
         p.name.toLowerCase().includes(search.toLowerCase()) ||
         p.sku.toLowerCase().includes(search.toLowerCase())
       const matchCat = categoryFilter === 'all' || p.category === categoryFilter
       return matchSearch && matchCat
     })
-  }, [products, search, categoryFilter])
+  }, [agencyProducts, search, categoryFilter])
 
-  const lowStockCount = products.filter(p => p.stock > 0 && p.stock < 5).length
-  const outOfStockCount = products.filter(p => p.stock === 0).length
+  const lowStockCount = agencyProducts.filter(p => p.stock > 0 && p.stock < 5).length
+  const outOfStockCount = agencyProducts.filter(p => p.stock === 0).length
 
   function openAdd() {
     setEditingProduct(null)
     setForm(EMPTY_FORM)
     setHasVariants(false)
     setPhotoPreview(null)
+    setFormAgencyId(currentAgencyId || '')
     setShowModal(true)
   }
 
@@ -65,6 +72,7 @@ export default function Inventory() {
       photo: product.photo,
       variants: hasVars ? product.variants : [],
     })
+    setFormAgencyId(product.agencyId || '')
     setPhotoPreview(product.photo)
     setShowModal(true)
   }
@@ -118,12 +126,14 @@ export default function Inventory() {
     const totalStock = hasVariants
       ? variants.reduce((s, v) => s + v.stock, 0)
       : Number(form.stock)
+    const agencyIdToSave = currentAgencyId || formAgencyId || null
     const data = {
       ...form,
       costPrice: Number(form.costPrice),
       salePrice: Number(form.salePrice),
       stock: totalStock,
       variants,
+      agencyId: agencyIdToSave,
     }
     if (!data.sku || !data.name) {
       toast.error('SKU y nombre son obligatorios')
@@ -163,7 +173,12 @@ export default function Inventory() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-gray-900">Inventario</h1>
-          <p className="text-gray-500 text-sm mt-1">{products.length} productos registrados</p>
+          <p className="text-gray-500 text-sm mt-1">
+            {agencyProducts.length} productos
+            {currentAgencyId && agencies.length > 0
+              ? ` — ${agencies.find(a => a.id === currentAgencyId)?.name || ''}`
+              : ''}
+          </p>
         </div>
         <button onClick={openAdd} className="btn-primary">
           <Plus size={18} />
@@ -251,6 +266,22 @@ export default function Inventory() {
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              {/* Agency selector — visible when admin views all */}
+              {currentUser?.role === 'admin' && !currentAgencyId && agencies.length > 0 && (
+                <div>
+                  <label className="label">Agencia</label>
+                  <select
+                    className="input"
+                    value={formAgencyId}
+                    onChange={e => setFormAgencyId(e.target.value)}
+                  >
+                    <option value="">Sin agencia específica</option>
+                    {agencies.map(a => (
+                      <option key={a.id} value={a.id}>{a.name} — {a.city}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
               {/* Photo upload */}
               <div>
                 <label className="label">Foto del producto</label>
