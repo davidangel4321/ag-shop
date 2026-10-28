@@ -133,6 +133,32 @@ export default function Dashboard() {
     return { totalRevenue, totalCost, grossProfit, profitMargin, inventoryValue, chartData, topProducts, recentSales }
   }, [filteredSales, filteredProducts, period])
 
+  // Comportamiento mes a mes (últimos 12 meses), respeta filtro de agencia
+  const monthlyData = useMemo(() => {
+    const monthNames = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
+    const now = new Date()
+    const months = []
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+      const label = `${monthNames[d.getMonth()]} ${String(d.getFullYear()).slice(2)}`
+      months.push({ key, label, Ventas: 0, Ganancia: 0, Ventas_n: 0 })
+    }
+    const byKey = Object.fromEntries(months.map(m => [m.key, m]))
+    sales.forEach(sale => {
+      if (currentAgencyId && sale.agencyId !== currentAgencyId) return
+      const d = new Date(sale.date)
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+      const row = byKey[key]
+      if (!row) return
+      const cost = sale.items.reduce((s, i) => s + i.cost * i.qty, 0)
+      row.Ventas += sale.total
+      row.Ganancia += sale.total - cost - (sale.shippingReal || 0)
+      row.Ventas_n += 1
+    })
+    return months
+  }, [sales, currentAgencyId])
+
   const agencyLabel = currentAgencyId && agencies.length > 0
     ? agencies.find(a => a.id === currentAgencyId)?.name || ''
     : null
@@ -291,6 +317,52 @@ export default function Dashboard() {
               </BarChart>
             </ResponsiveContainer>
           )}
+        </div>
+      </div>
+
+      {/* Monthly behavior */}
+      <div className="card">
+        <h2 className="font-bold text-gray-900 mb-1">Comportamiento mes a mes</h2>
+        <p className="text-xs text-gray-400 mb-4">Últimos 12 meses • útil para liquidar utilidades por período</p>
+        <ResponsiveContainer width="100%" height={280}>
+          <BarChart data={monthlyData} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+            <XAxis dataKey="label" tick={{ fontSize: 10, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
+            <YAxis tickFormatter={copFormatter} tick={{ fontSize: 10, fill: '#9ca3af' }} axisLine={false} tickLine={false} width={60} />
+            <Tooltip
+              formatter={(value, name) => [formatCOP(value), name]}
+              contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}
+            />
+            <Legend iconType="circle" iconSize={8} />
+            <Bar dataKey="Ventas" fill="#8B1A1A" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="Ganancia" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
+
+        {/* Monthly table for liquidation */}
+        <div className="overflow-x-auto mt-6">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left border-b border-gray-100">
+                <th className="pb-2 px-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Mes</th>
+                <th className="pb-2 px-3 text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Ventas</th>
+                <th className="pb-2 px-3 text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Nº ventas</th>
+                <th className="pb-2 px-3 text-xs font-semibold text-gray-500 uppercase tracking-wide text-right">Ganancia</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {[...monthlyData].reverse().map(m => (
+                <tr key={m.key}>
+                  <td className="py-2 px-3 font-semibold text-gray-800">{m.label}</td>
+                  <td className="py-2 px-3 text-right text-gray-700">{formatCOP(m.Ventas)}</td>
+                  <td className="py-2 px-3 text-right text-gray-500">{m.Ventas_n}</td>
+                  <td className={`py-2 px-3 text-right font-bold ${m.Ganancia < 0 ? 'text-red-600' : 'text-green-700'}`}>
+                    {formatCOP(m.Ganancia)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
 
