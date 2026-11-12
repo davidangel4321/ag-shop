@@ -44,6 +44,7 @@ export default function Login() {
               onError={(e) => { e.target.style.display='none'; }}
             />
             <h1 className="text-2xl font-black text-gray-900">AG Shop App</h1>
+            <p className="text-gray-500 text-sm mt-1 italic">La mejor calidad al menor precio</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
