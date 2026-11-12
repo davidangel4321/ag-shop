@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import CartItem from '../components/CartItem'
 import { formatCOP } from '../utils/format'
-import { generateReceipt, generateShippingLabel } from '../utils/pdf'
 
 const PAYMENT_METHODS = ['Efectivo', 'Tarjeta', 'Transferencia', 'Nequi', 'Daviplata', 'Contra entrega']
 
@@ -124,6 +123,7 @@ export default function NewSale() {
       const sale = await addSale(saleData)
 
       // Generate PDFs
+      const { generateReceipt, generateShippingLabel } = await import('../utils/pdf')
       await generateReceipt(sale, agencies.find(a => a.id === sale.agencyId))
       await generateShippingLabel(sale)
 

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Download, MapPin, Phone, User, CreditCard, Package, Truck } from 'lucide-react'
 import { useApp } from '../context/AppContext'
 import { formatCOP, formatDateTime } from '../utils/format'
-import { generateReceipt, generateShippingLabel } from '../utils/pdf'
+const loadPdf = () => import('../utils/pdf')
 
 export default function SaleDetail() {
   const { id } = useParams()
@@ -44,14 +44,20 @@ export default function SaleDetail() {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => generateReceipt(sale, agencies.find(a => a.id === sale.agencyId))}
+            onClick={async () => {
+              const { generateReceipt } = await loadPdf()
+              generateReceipt(sale, agencies.find(a => a.id === sale.agencyId))
+            }}
             className="btn-secondary text-sm"
           >
             <Download size={16} />
             Recibo
           </button>
           <button
-            onClick={() => generateShippingLabel(sale)}
+            onClick={async () => {
+              const { generateShippingLabel } = await loadPdf()
+              generateShippingLabel(sale)
+            }}
             className="btn-primary text-sm"
           >
             <Download size={16} />

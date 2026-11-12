@@ -1,24 +1,39 @@
-import React from 'react'
+import React, { Suspense, lazy } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { AppProvider, useApp } from './context/AppContext'
 import Layout from './components/Layout'
 import Login from './pages/Login'
-import Dashboard from './pages/Dashboard'
-import Inventory from './pages/Inventory'
-import NewSale from './pages/NewSale'
-import SalesHistory from './pages/SalesHistory'
-import SaleDetail from './pages/SaleDetail'
-import Users from './pages/Users'
-import Agencies from './pages/Agencies'
+
+// Páginas pesadas (gráficos, PDF) se cargan solo cuando se visitan
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const Inventory = lazy(() => import('./pages/Inventory'))
+const NewSale = lazy(() => import('./pages/NewSale'))
+const SalesHistory = lazy(() => import('./pages/SalesHistory'))
+const SaleDetail = lazy(() => import('./pages/SaleDetail'))
+const Users = lazy(() => import('./pages/Users'))
+const Agencies = lazy(() => import('./pages/Agencies'))
+
+function Splash() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-700 to-primary-900">
+      <div className="text-center">
+        <img src="/logo.jpeg" alt="" className="h-16 w-16 object-contain mx-auto mb-4 animate-pulse" />
+        <p className="text-white text-sm">Cargando AG Shop...</p>
+      </div>
+    </div>
+  )
+}
 
 function PrivateRoute({ children }) {
-  const { currentUser } = useApp()
+  const { currentUser, loading } = useApp()
+  if (loading) return <Splash />
   return currentUser ? children : <Navigate to="/login" replace />
 }
 
 function AdminRoute({ children }) {
-  const { currentUser } = useApp()
+  const { currentUser, loading } = useApp()
+  if (loading) return <Splash />
   if (!currentUser) return <Navigate to="/login" replace />
   if (currentUser.role !== 'admin') return <Navigate to="/dashboard" replace />
   return children
@@ -30,17 +45,8 @@ function PublicRoute({ children }) {
 }
 
 function AppRoutes() {
-  const { loading } = useApp()
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-700 to-primary-900">
-      <div className="text-center">
-        <img src="/logo.jpeg" className="h-16 w-16 object-contain mx-auto mb-4 animate-pulse" />
-        <p className="text-white text-sm">Cargando AG Shop...</p>
-      </div>
-    </div>
-  )
-
   return (
+    <Suspense fallback={<Splash />}>
     <Routes>
       <Route
         path="/login"
@@ -83,6 +89,7 @@ function AppRoutes() {
       </Route>
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
+    </Suspense>
   )
 }
 

@@ -105,20 +105,19 @@ export function AppProvider({ children }) {
           dispatch({ type: 'SET_SELECTED_AGENCY', payload: savedAgency })
         }
 
-        // Load agencies from Firestore
-        const agencies = await getCollection('agencies')
+        // Load all collections in parallel (antes eran 4 peticiones en fila)
+        const [agencies, products, sales, loadedUsers] = await Promise.all([
+          getCollection('agencies'),
+          getCollection('products'),
+          getCollection('sales'),
+          getCollection('users'),
+        ])
         dispatch({ type: 'LOAD_AGENCIES', payload: agencies })
-
-        // Load products from Firestore
-        const products = await getCollection('products')
         dispatch({ type: 'LOAD_PRODUCTS', payload: products })
-
-        // Load sales from Firestore
-        const sales = await getCollection('sales')
         dispatch({ type: 'LOAD_SALES', payload: sales })
 
-        // Load users from Firestore, seed default admin if empty
-        let users = await getCollection('users')
+        // Seed default admin if users collection is empty
+        let users = loadedUsers
         if (!users || users.length === 0) {
           await setDocument('users', DEFAULT_ADMIN.id, DEFAULT_ADMIN)
           users = [DEFAULT_ADMIN]
