@@ -124,7 +124,7 @@ export default function NewSale() {
       const sale = await addSale(saleData)
 
       // Generate PDFs
-      await generateReceipt(sale)
+      await generateReceipt(sale, agencies.find(a => a.id === sale.agencyId))
       await generateShippingLabel(sale)
 
       toast.success(`¡Venta ${sale.id} registrada! PDFs generados.`, { duration: 5000 })

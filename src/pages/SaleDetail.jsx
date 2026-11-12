@@ -7,7 +7,7 @@ import { generateReceipt, generateShippingLabel } from '../utils/pdf'
 
 export default function SaleDetail() {
   const { id } = useParams()
-  const { sales } = useApp()
+  const { sales, agencies } = useApp()
   const navigate = useNavigate()
 
   const sale = sales.find(s => s.id === id)
@@ -44,7 +44,7 @@ export default function SaleDetail() {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => generateReceipt(sale)}
+            onClick={() => generateReceipt(sale, agencies.find(a => a.id === sale.agencyId))}
             className="btn-secondary text-sm"
           >
             <Download size={16} />

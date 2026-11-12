@@ -3,10 +3,11 @@ import autoTable from 'jspdf-autotable'
 import { formatDateTime, formatDate, formatCOP } from './format'
 import { STORE } from './storeConfig'
 
-export async function generateReceipt(sale) {
+export async function generateReceipt(sale, agency) {
   const doc = new jsPDF({ unit: 'mm', format: [80, 200] })
   const pageWidth = 80
   const margin = 5
+  const location = agency?.city ? `${agency.city}, Colombia` : STORE.address
 
   // ── Cargar y recortar logo ────────────────────────────────────────────────────
   let logoDataUrl = null
@@ -47,7 +48,7 @@ export async function generateReceipt(sale) {
     doc.setTextColor(0, 0, 0)
     doc.text(`NIT: ${STORE.nit}`, pageWidth / 2, 26, { align: 'center' })
     doc.text(`Tel: ${STORE.phone}`, pageWidth / 2, 30, { align: 'center' })
-    if (STORE.address) doc.text(STORE.address, pageWidth / 2, 34, { align: 'center' })
+    if (location) doc.text(location, pageWidth / 2, 34, { align: 'center' })
     doc.setLineWidth(0.3)
     doc.line(margin, 37, pageWidth - margin, 37)
     doc.text(`Fecha: ${formatDateTime(sale.date)}`, margin, 42)
@@ -125,7 +126,7 @@ export async function generateReceipt(sale) {
   doc.setFontSize(8)
   doc.text(`NIT: ${STORE.nit}`, pageWidth / 2, 15, { align: 'center' })
   doc.text(`Tel: ${STORE.phone}`, pageWidth / 2, 19, { align: 'center' })
-  if (STORE.address) doc.text(STORE.address, pageWidth / 2, 23, { align: 'center' })
+  if (location) doc.text(location, pageWidth / 2, 23, { align: 'center' })
 
   doc.setLineWidth(0.3)
   doc.line(margin, 26, pageWidth - margin, 26)
