@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo } from 'react'
-import { Plus, Search, X, Upload, Layers, Trash2 } from 'lucide-react'
+import { Plus, Search, X, Upload, Layers, Trash2, Package, PackageX, AlertTriangle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useApp } from '../context/AppContext'
 import ProductCard from '../components/ProductCard'
@@ -170,46 +170,60 @@ export default function Inventory() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-gray-900">Inventario</h1>
+          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-primary-500 mb-1">Catálogo</p>
+          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Inventario</h1>
           <p className="text-gray-500 text-sm mt-1">
             {agencyProducts.length} productos
             {currentAgencyId && agencies.length > 0
-              ? ` — ${agencies.find(a => a.id === currentAgencyId)?.name || ''}`
+              ? ` · ${agencies.find(a => a.id === currentAgencyId)?.name || ''}`
               : ''}
           </p>
         </div>
-        <button onClick={openAdd} className="btn-primary">
+        <button onClick={openAdd} className="btn-primary self-start sm:self-auto">
           <Plus size={18} />
           Nuevo Producto
         </button>
       </div>
 
-      {/* Alerts */}
-      {(lowStockCount > 0 || outOfStockCount > 0) && (
-        <div className="flex flex-wrap gap-3">
-          {outOfStockCount > 0 && (
-            <div className="flex items-center gap-2 px-4 py-2 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 font-semibold">
-              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              {outOfStockCount} producto{outOfStockCount > 1 ? 's' : ''} agotado{outOfStockCount > 1 ? 's' : ''}
-            </div>
-          )}
-          {lowStockCount > 0 && (
-            <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-700 font-semibold">
-              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-              {lowStockCount} producto{lowStockCount > 1 ? 's' : ''} con stock bajo
-            </div>
-          )}
+      {/* Stock summary */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="card !p-4 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-600">
+            <Package size={18} />
+          </div>
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400">Productos</p>
+            <p className="text-lg font-black text-gray-900 tabular-nums">{agencyProducts.length}</p>
+          </div>
         </div>
-      )}
+        <div className={`card !p-4 flex items-center gap-3 ${outOfStockCount > 0 ? 'ring-1 ring-red-200 bg-red-50/40' : ''}`}>
+          <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center text-red-600">
+            <PackageX size={18} />
+          </div>
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400">Agotados</p>
+            <p className="text-lg font-black text-gray-900 tabular-nums">{outOfStockCount}</p>
+          </div>
+        </div>
+        <div className={`card !p-4 flex items-center gap-3 ${lowStockCount > 0 ? 'ring-1 ring-amber-200 bg-amber-50/40' : ''}`}>
+          <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600">
+            <AlertTriangle size={18} />
+          </div>
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400">Stock bajo</p>
+            <p className="text-lg font-black text-gray-900 tabular-nums">{lowStockCount}</p>
+          </div>
+        </div>
+      </div>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      {/* Toolbar */}
+      <div className="flex flex-col lg:flex-row gap-3 lg:items-center">
         <div className="relative flex-1">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
-            className="input pl-9"
+            className="input pl-10 pr-9 !py-2.5 shadow-sm"
             placeholder="Buscar por nombre o SKU..."
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -220,14 +234,22 @@ export default function Inventory() {
             </button>
           )}
         </div>
-        <select
-          className="input sm:w-48"
-          value={categoryFilter}
-          onChange={e => setCategoryFilter(e.target.value)}
-        >
-          <option value="all">Todas las categorías</option>
-          {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-        </select>
+        {/* Category pills */}
+        <div className="flex gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
+          {['all', ...CATEGORIES].map(c => (
+            <button
+              key={c}
+              onClick={() => setCategoryFilter(c)}
+              className={`shrink-0 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
+                categoryFilter === c
+                  ? 'bg-gray-900 text-white shadow-md'
+                  : 'bg-white text-gray-600 ring-1 ring-gray-200 hover:ring-gray-300'
+              }`}
+            >
+              {c === 'all' ? 'Todas' : c}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Grid */}
