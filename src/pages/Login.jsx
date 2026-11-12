@@ -43,8 +43,7 @@ export default function Login() {
               className="h-20 w-20 object-contain mb-4"
               onError={(e) => { e.target.style.display='none'; }}
             />
-            <h1 className="text-2xl font-black text-gray-900">AG Shop</h1>
-            <p className="text-gray-500 text-sm mt-1">POS & Gestión de Inventario</p>
+            <h1 className="text-2xl font-black text-gray-900">AG Shop App</h1>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
