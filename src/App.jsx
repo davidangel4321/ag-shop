@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast'
 import { AppProvider, useApp } from './context/AppContext'
 import Layout from './components/Layout'
 import Login from './pages/Login'
+import ErrorBoundary from './components/ErrorBoundary'
 
 // Páginas pesadas (gráficos, PDF) se cargan solo cuando se visitan
 const Dashboard = lazy(() => import('./pages/Dashboard'))
@@ -46,6 +47,7 @@ function PublicRoute({ children }) {
 
 function AppRoutes() {
   return (
+    <ErrorBoundary>
     <Suspense fallback={<Splash />}>
     <Routes>
       <Route
@@ -90,6 +92,7 @@ function AppRoutes() {
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
     </Suspense>
+    </ErrorBoundary>
   )
 }
 
