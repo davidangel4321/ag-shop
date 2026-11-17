@@ -10,6 +10,7 @@ const EMPTY_FORM = {
   role: 'vendedor',
   active: true,
   agencyId: '',
+  commissionPct: 0,
 }
 
 export default function UsersPage() {
@@ -37,6 +38,7 @@ export default function UsersPage() {
       role: user.role,
       active: user.active,
       agencyId: user.agencyId || '',
+      commissionPct: user.commissionPct ?? 0,
     })
     setShowPassword(false)
     setPwSection({ newPassword: '', confirmPassword: '', show: false })
@@ -80,10 +82,10 @@ export default function UsersPage() {
     }
     try {
       if (editingUser) {
-        await updateUser({ ...editingUser, ...form, username: form.username.trim(), name: form.name.trim() })
+        await updateUser({ ...editingUser, ...form, username: form.username.trim(), name: form.name.trim(), commissionPct: Number(form.commissionPct) || 0 })
         toast.success('Usuario actualizado')
       } else {
-        await addUser({ ...form, username: form.username.trim(), name: form.name.trim() })
+        await addUser({ ...form, username: form.username.trim(), name: form.name.trim(), commissionPct: Number(form.commissionPct) || 0 })
         toast.success('Usuario creado')
       }
       setShowModal(false)
@@ -309,6 +311,21 @@ export default function UsersPage() {
                   </select>
                 </div>
               )}
+
+              <div>
+                <label className="label">Comisión por venta (%)</label>
+                <input
+                  className="input"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.5"
+                  placeholder="0"
+                  value={form.commissionPct}
+                  onChange={e => setForm(f => ({ ...f, commissionPct: e.target.value }))}
+                />
+                <p className="text-xs text-gray-400 mt-1">Se aplica al valor de productos vendidos (sin domicilio ni descuento). Déjalo en 0 si no aplica.</p>
+              </div>
 
               <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
                 <div>

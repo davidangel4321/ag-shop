@@ -14,6 +14,10 @@ const SalesHistory = lazy(() => import('./pages/SalesHistory'))
 const SaleDetail = lazy(() => import('./pages/SaleDetail'))
 const Users = lazy(() => import('./pages/Users'))
 const Agencies = lazy(() => import('./pages/Agencies'))
+const Expenses = lazy(() => import('./pages/Expenses'))
+const Commissions = lazy(() => import('./pages/Commissions'))
+const Closures = lazy(() => import('./pages/Closures'))
+const AuditLog = lazy(() => import('./pages/AuditLog'))
 
 function Splash() {
   return (
@@ -72,6 +76,31 @@ function AppRoutes() {
         <Route path="sales/new" element={<NewSale />} />
         <Route path="sales" element={<SalesHistory />} />
         <Route path="sales/:id" element={<SaleDetail />} />
+        <Route path="commissions" element={<Commissions />} />
+        <Route
+          path="expenses"
+          element={
+            <AdminRoute>
+              <Expenses />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="closures"
+          element={
+            <AdminRoute>
+              <Closures />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="audit"
+          element={
+            <AdminRoute>
+              <AuditLog />
+            </AdminRoute>
+          }
+        />
         <Route
           path="users"
           element={

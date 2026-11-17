@@ -9,6 +9,10 @@ import {
   X,
   Users,
   Building2,
+  Percent,
+  Receipt,
+  Lock,
+  ShieldCheck,
 } from 'lucide-react'
 import { useApp } from '../context/AppContext'
 
@@ -17,9 +21,13 @@ const mainItems = [
   { to: '/inventory', icon: Package, label: 'Inventario' },
   { to: '/sales/new', icon: ShoppingCart, label: 'Nueva Venta' },
   { to: '/sales', icon: History, label: 'Historial' },
+  { to: '/commissions', icon: Percent, label: 'Comisiones' },
 ]
 
 const adminItems = [
+  { to: '/expenses', icon: Receipt, label: 'Gastos' },
+  { to: '/closures', icon: Lock, label: 'Cierres' },
+  { to: '/audit', icon: ShieldCheck, label: 'Auditoría' },
   { to: '/users', icon: Users, label: 'Usuarios' },
   { to: '/agencies', icon: Building2, label: 'Agencias' },
 ]
