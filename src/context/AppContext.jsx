@@ -105,24 +105,31 @@ export function AppProvider({ children }) {
           dispatch({ type: 'SET_SELECTED_AGENCY', payload: savedAgency })
         }
 
-        // Load all collections in parallel (antes eran 4 peticiones en fila)
-        const [agencies, products, sales, loadedUsers] = await Promise.all([
-          getCollection('agencies'),
-          getCollection('products'),
-          getCollection('sales'),
-          getCollection('users'),
-        ])
-        dispatch({ type: 'LOAD_AGENCIES', payload: agencies })
-        dispatch({ type: 'LOAD_PRODUCTS', payload: products })
-        dispatch({ type: 'LOAD_SALES', payload: sales })
+        // Load all collections in parallel. La pantalla no espera más de 8 s:
+        // si Firestore tarda, se muestra la app y los datos llegan al terminar.
+        const loadAll = (async () => {
+          const [agencies, products, sales, loadedUsers] = await Promise.all([
+            getCollection('agencies'),
+            getCollection('products'),
+            getCollection('sales'),
+            getCollection('users'),
+          ])
+          dispatch({ type: 'LOAD_AGENCIES', payload: agencies })
+          dispatch({ type: 'LOAD_PRODUCTS', payload: products })
+          dispatch({ type: 'LOAD_SALES', payload: sales })
 
-        // Seed default admin if users collection is empty
-        let users = loadedUsers
-        if (!users || users.length === 0) {
-          await setDocument('users', DEFAULT_ADMIN.id, DEFAULT_ADMIN)
-          users = [DEFAULT_ADMIN]
-        }
-        dispatch({ type: 'LOAD_USERS', payload: users })
+          // Seed default admin if users collection is empty
+          let users = loadedUsers
+          if (!users || users.length === 0) {
+            await setDocument('users', DEFAULT_ADMIN.id, DEFAULT_ADMIN)
+            users = [DEFAULT_ADMIN]
+          }
+          dispatch({ type: 'LOAD_USERS', payload: users })
+        })()
+
+        const timeout = new Promise(resolve => setTimeout(resolve, 8000))
+        await Promise.race([loadAll, timeout])
+        loadAll.catch(err => console.error('Bootstrap error:', err))
       } catch (err) {
         console.error('Bootstrap error:', err)
       } finally {
